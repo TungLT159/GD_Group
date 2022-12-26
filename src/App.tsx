@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// routes
+import Router from "./routes";
+// theme
+import ThemeProvider from "./theme";
+// locales
+import ThemeLocalization from "./locales";
+// components
+import { StyledChart } from "./components/chart";
+import SnackbarProvider from "./components/snackbar";
+import { ThemeSettings } from "./components/settings";
+import { MotionLazyContainer } from "./components/animate";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MotionLazyContainer>
+      <ThemeProvider>
+        <ThemeSettings>
+          <ThemeLocalization>
+            <SnackbarProvider>
+              <StyledChart />
+              <Router />
+            </SnackbarProvider>
+          </ThemeLocalization>
+        </ThemeSettings>
+      </ThemeProvider>
+    </MotionLazyContainer>
   );
 }
 

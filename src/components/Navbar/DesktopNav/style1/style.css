@@ -1,0 +1,115 @@
+/*
+This is the extracted copied part responsible for showing & hiding the submenu.
+*/
+.nav__submenu {
+  display: none; }
+
+.nav__menu-item:hover .nav__submenu {
+  display: block; }
+
+/*
+Layout styles.
+
+I like to work on stuff that's good looking so I remixed a cool simple menu by Mike Rojas (thanks!): https://codepen.io/mikerojas87/pen/rojKb 
+*/
+html {
+  box-sizing: border-box; }
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box; }
+
+.menu-container {
+  text-align: center; }
+
+nav ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0; }
+
+.nav {
+  display: inline-block;
+  margin: 0;
+  padding: 0 160px 0 180px;
+  background: #c92127;
+  color: #fff;
+  text-align: left;
+  font-size: 15px;
+  width: 100%; }
+  .nav a {
+    display: block;
+    padding: 0 16px;
+    line-height: inherit;
+    cursor: pointer; }
+
+.nav__menu {
+  line-height: 45px;
+  font-weight: 700; }
+
+.nav__menu-item {
+  display: inline-block;
+  position: relative;
+  z-index: 10; }
+  .nav__menu-item a {
+    text-decoration: none; }
+  .nav__menu-item:hover {
+    background-color: #981c20; }
+    .nav__menu-item:hover .nav-icon {
+      transition: all 0.4s ease;
+      transform: rotate(180deg); }
+    .nav__menu-item:hover .nav__submenu {
+      display: block; }
+
+.nav__submenu {
+  font-weight: 500;
+  text-transform: none;
+  display: none;
+  position: absolute;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  min-width: 300px;
+  background-color: rgba(152, 28, 32, 0.8);
+  backdrop-filter: blur(7px);
+  animation: menu 0.3s linear; }
+
+@keyframes menu {
+  0% {
+    .nav__submenu-item {
+      a {
+        opacity: 0; } }
+    height: 0%;
+    opacity: 0; }
+  25% {
+    .nav__submenu-item {
+      a {
+        opacity: 0.25; } }
+    height: 25%;
+    opacity: 0.25; }
+  50% {
+    .nav__submenu-item {
+      a {
+        opacity: 0.5; } }
+    height: 50%;
+    opacity: 0.5; }
+  75% {
+    .nav__submenu-item {
+      a {
+        opacity: 0.75; } }
+    height: 75%;
+    opacity: 0.75; }
+  100% {
+    .nav__submenu-item {
+      a {
+        opacity: 1; } }
+    height: 100%;
+    opacity: 1; } }
+
+.nav__submenu-item {
+  max-width: 300px; }
+  .nav__submenu-item a {
+    color: #fff;
+    text-decoration: none; }
+  .nav__submenu-item:hover {
+    background: rgba(0, 0, 0, 0.1); }

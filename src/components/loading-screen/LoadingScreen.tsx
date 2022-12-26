@@ -1,0 +1,96 @@
+import { m } from "framer-motion";
+// @mui
+import { alpha, styled } from "@mui/material/styles";
+import { Box } from "@mui/material";
+//
+// import Logo from '../logo';
+import ProgressBar from "../progress-bar";
+
+// ----------------------------------------------------------------------
+
+const StyledRoot = styled("div")(({ theme }) => ({
+  right: 0,
+  bottom: 0,
+  zIndex: 9998,
+  width: "100%",
+  height: "100%",
+  position: "fixed",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: theme.palette.background.default,
+}));
+
+// ----------------------------------------------------------------------
+
+export default function LoadingScreen() {
+  const Image = styled("img")(({ theme }) => ({
+    // width: "125px",
+    // height: "70px",
+  }));
+  return (
+    <>
+      <ProgressBar />
+
+      <StyledRoot>
+        <m.div
+          animate={{
+            scale: [1, 0.9, 0.9, 1, 1],
+            opacity: [1, 0.48, 0.48, 1, 1],
+          }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeatDelay: 1,
+            repeat: Infinity,
+          }}>
+          <Image
+            src="https://file.hstatic.net/200000407521/file/logofooter_625dc0d6f45f4f04861760f1b5eb9135.png"
+            alt="logo"
+            sx={{ width: 64, height: 64 }}
+          />
+        </m.div>
+
+        <Box
+          component={m.div}
+          animate={{
+            scale: [1.6, 1, 1, 1.6, 1.6],
+            rotate: [270, 0, 0, 270, 270],
+            opacity: [0.25, 1, 1, 1, 0.25],
+            borderRadius: ["25%", "25%", "50%", "50%", "25%"],
+          }}
+          transition={{ ease: "linear", duration: 3.2, repeat: Infinity }}
+          sx={{
+            width: 100,
+            height: 100,
+            position: "absolute",
+            border: (theme) =>
+              `solid 3px ${alpha(theme.palette.primary.dark, 0.24)}`,
+          }}
+        />
+
+        <Box
+          component={m.div}
+          animate={{
+            scale: [1, 1.2, 1.2, 1, 1],
+            rotate: [0, 270, 270, 0, 0],
+            opacity: [1, 0.25, 0.25, 0.25, 1],
+            borderRadius: ["25%", "25%", "50%", "50%", "25%"],
+          }}
+          transition={{
+            ease: "linear",
+            duration: 3.2,
+            repeat: Infinity,
+          }}
+          sx={{
+            width: 120,
+            height: 120,
+            position: "absolute",
+            border: (theme) =>
+              `solid 8px ${alpha(theme.palette.primary.dark, 0.24)}`,
+          }}
+        />
+      </StyledRoot>
+    </>
+  );
+}
