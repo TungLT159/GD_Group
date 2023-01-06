@@ -2,7 +2,7 @@ import {
   PersonOutline,
   SearchOutlined,
   Login,
-  AppRegistration,
+  // AppRegistration,
   DescriptionOutlined,
   PhoneOutlined,
 } from "@mui/icons-material";
@@ -208,11 +208,10 @@ function DesktopNav() {
               }}>
               <Link to={PATH_AUTH.login}>
                 <MenuItem onClick={handleClose}>
-                  <Login fontSize="small" sx={{ marginRight: "4px" }} /> Đăng
-                  nhập
+                  <Login fontSize="small" sx={{ marginRight: "4px" }} /> Admin
                 </MenuItem>
               </Link>
-              <Link to={PATH_AUTH.register}>
+              {/* <Link to={PATH_AUTH.register}>
                 <MenuItem onClick={handleClose}>
                   <AppRegistration
                     fontSize="small"
@@ -220,7 +219,7 @@ function DesktopNav() {
                   />{" "}
                   Đăng ký
                 </MenuItem>
-              </Link>
+              </Link> */}
             </Menu>
           </Box>
         </Toolbar>

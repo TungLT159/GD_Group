@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 // routes
-import { PATH_DASHBOARD } from "../routes/paths";
+import { PATH_AUTH } from "../routes/paths";
 // components
 import LoadingScreen from "../components/loading-screen";
 //
@@ -9,15 +9,15 @@ import { useAuthContext } from "./useAuthContext";
 
 // ----------------------------------------------------------------------
 
-type GuestGuardProps = {
+type GuestRegisterProps = {
   children: ReactNode;
 };
 
-export default function GuestGuard({ children }: GuestGuardProps) {
+export default function GuestRegister({ children }: GuestRegisterProps) {
   const { isAuthenticated, isInitialized } = useAuthContext();
 
   if (isAuthenticated) {
-    return <Navigate to={PATH_DASHBOARD.blog.new} />;
+    return <Navigate to={PATH_AUTH.login} />;
   }
 
   if (!isInitialized) {

@@ -72,12 +72,7 @@ const navConfig = [
         items: [{ title: "Dashboard", path: "#" }],
       },
     ],
-  },
-  {
-    title: "Documentation",
-    icon: <Iconify icon="eva:book-open-fill" />,
-    path: "#",
-  },
+  }
 ];
 
 export default navConfig;

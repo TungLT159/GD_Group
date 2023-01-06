@@ -43,9 +43,9 @@ export default function BlogPostsPage() {
 
   const getAllPosts = useCallback(async () => {
     try {
-      const response = await axios.get("/api/blog/posts");
+      const response = await axios.get("http://localhost:3001/api/gdvn/posts");
       console.log(response.data);
-      setPosts(response.data.posts);
+      // setPosts(response.data.posts);
     } catch (error) {
       console.error(error);
     }
@@ -62,7 +62,7 @@ export default function BlogPostsPage() {
   return (
     <>
       <Helmet>
-        <title> Blog: Posts | Minimal UI</title>
+        <title>Danh sách bài viết</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : "lg"}>

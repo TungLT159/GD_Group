@@ -1,63 +1,37 @@
-import {
-  Box,
-  // Button,
-  // Checkbox,
-  // FormControlLabel,
-  Grid,
-  // Link,
-  Stack,
-  // TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Grid, Link, Stack, Typography } from "@mui/material";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { keyframes } from "@emotion/react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { useSnackbar } from "../../../components/snackbar";
+import { useAuthContext } from "../../../auth/useAuthContext";
 
 import FormProvider, { RHFTextField } from "../../../components/hook-form";
 
 import { Link as RouterLink } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { useState, useEffect } from "react";
-import axios from "axios";
 
 export type FormValuesProps = {
   email: string;
   password: string;
   confirmPassword?: string;
+  afterSubmit?: string;
 };
 function Register() {
-  const { enqueueSnackbar } = useSnackbar();
-  const [data, setData] = useState<FormValuesProps>({
-    email: "",
-    password: "",
-  });
-  const [isSubmit, setIsSubmit] = useState(false);
-
-  useEffect(() => {
-    if (isSubmit) {
-      const formData = {
-        email: data.email,
-        password: data.password,
-      };
-      axios({
-        method: "post",
-        url: "http://localhost:3001/api/gdvn/register",
-        data: formData,
-      })
-        .then(() => {
-          setIsSubmit(false);
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [data, isSubmit]);
+  const { register } = useAuthContext();
 
   const RegisterSchema = Yup.object().shape({
-    email: Yup.string().email("Email không hợp lệ").required("Nhập email"),
-    password: Yup.string().required("Nhập password"),
-    confirmPassword: Yup.string().required("Xác nhận mật khẩu"),
+    email: Yup.string()
+      .lowercase()
+      .email("Email không hợp lệ")
+      .required("Nhập email"),
+    password: Yup.string()
+      .min(4, "độ dài mật khẩu tối thiểu 4 ký tự")
+      .max(20, "độ dài mật khẩu tối đa 20 ký tự")
+      .required("Nhập password"),
+    confirmPassword: Yup.string()
+      .required("Xác nhận mật khẩu")
+      .oneOf([Yup.ref("password"), null], "Mật khẩu không khớp"),
   });
   const moveDown = keyframes`
     0% {top:14%},
@@ -84,23 +58,23 @@ function Register() {
   });
   const {
     reset,
-    // setValue,
+    setError,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = methods;
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      console.log(data);
-      setData({
-        email: data.email,
-        password: data.password,
-      });
-      setIsSubmit(true);
-      reset();
-      enqueueSnackbar("Đăng ký thành công!");
-    } catch (error) {
+      if (register) {
+        await register(data.email, data.password);
+      }
+    } catch (error: any) {
       console.error(error);
+      reset();
+      setError("afterSubmit", {
+        ...error,
+        message: error.message,
+      });
     }
   };
   return (
@@ -204,88 +178,32 @@ function Register() {
                   }}>
                   Đăng ký
                 </Typography>
-                {/* <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label={
-                    <Typography sx={{ color: "#fff", display: "inline-block" }}>
-                      Email
-                    </Typography>
-                  }
-                  FormHelperTextProps={{ color: "#fff" }}
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  sx={{ textColor: "white" }}
-                  color="primary"
-                /> */}
                 <Stack spacing={3} mt={3} mb={3}>
+                  {!!errors.afterSubmit && (
+                    <Alert severity="error">{errors.afterSubmit.message}</Alert>
+                  )}
+
                   <RHFTextField
                     sx={{ color: "white" }}
                     name="email"
                     label="Email"
-                    required
+                    // required
                   />
                   <RHFTextField
                     name="password"
                     type="password"
                     sx={{ color: "white" }}
                     label="Mật khẩu"
-                    required
+                    // required
                   />
                   <RHFTextField
                     name="confirmPassword"
                     type="password"
                     sx={{ color: "white" }}
                     label="Xác nhận mật khẩu"
-                    required
+                    // required
                   />
                 </Stack>
-
-                {/* <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label={
-                    <Typography sx={{ color: "#fff", display: "inline-block" }}>
-                      Mật khẩu
-                    </Typography>
-                  }
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  color="primary"
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label={
-                    <Typography sx={{ color: "#fff", display: "inline-block" }}>
-                      Xác nhận mật khẩu
-                    </Typography>
-                  }
-                  type="password"
-                  id="confirmPassword"
-                  autoComplete="current-password"
-                  color="primary"
-                /> */}
-                {/* <RouterLink to="/"> */}
-                {/* <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                    fontSize: { xs: "12px!important", sm: "unset" },
-                  }}>
-                  Đăng ký
-                </Button> */}
                 <LoadingButton
                   fullWidth
                   type="submit"
@@ -296,30 +214,35 @@ function Register() {
                 </LoadingButton>
                 {/* </RouterLink> */}
                 <Grid container mt={3}>
-                  <Grid item>
-                    <RouterLink
-                      to="/auth/login"
-                      style={{
+                  <Grid item xs>
+                    <Link
+                      href="#"
+                      variant="body2"
+                      sx={{
                         color: "hsl(218, 81%, 85%)!important",
-                        // fontSize: {
-                        //   xs: "12px!important",
-                        //   sm: "unset",
-                        // },
+                        fontSize: {
+                          xs: "12px!important",
+                          sm: "unset",
+                        },
                         textDecoration: "none",
                       }}>
-                      {/* <Link
-                        variant="body2"
-                        sx={{
-                          color: "hsl(218, 81%, 85%)!important",
-                          fontSize: {
-                            xs: "12px!important",
-                            sm: "unset",
-                          },
-                          textDecoration: "none",
-                        }}> */}
-                      Bạn đã có tài khoản?
-                      {/* </Link> */}
-                    </RouterLink>
+                      Quên mật khẩu?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "hsl(218, 81%, 85%)!important",
+                        fontSize: {
+                          xs: "12px!important",
+                          sm: "unset",
+                        },
+                        textDecoration: "none",
+                        transform: "translateY(20%)",
+                      }}>
+                      <RouterLink to="/auth/login">Đăng nhập</RouterLink>
+                    </Typography>
                   </Grid>
                 </Grid>
               </Box>

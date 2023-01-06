@@ -1,9 +1,14 @@
-import { createContext, useEffect, useReducer, useCallback } from 'react';
+import { createContext, useEffect, useReducer, useCallback } from "react";
 // utils
-import axios from '../utils/axios';
+import axios from "../utils/axios";
 //
-import { isValidToken, setSession } from './utils';
-import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
+import { isValidToken, setSession } from "./utils";
+import {
+  ActionMapType,
+  AuthStateType,
+  AuthUserType,
+  JWTContextType,
+} from "./types";
 
 // ----------------------------------------------------------------------
 
@@ -14,10 +19,10 @@ import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './ty
 // ----------------------------------------------------------------------
 
 enum Types {
-  INITIAL = 'INITIAL',
-  LOGIN = 'LOGIN',
-  REGISTER = 'REGISTER',
-  LOGOUT = 'LOGOUT',
+  INITIAL = "INITIAL",
+  LOGIN = "LOGIN",
+  REGISTER = "REGISTER",
+  LOGOUT = "LOGOUT",
 }
 
 type Payload = {
@@ -91,15 +96,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : '';
+      const accessToken =
+        typeof window !== "undefined"
+          ? localStorage.getItem("accessToken")
+          : "";
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await axios.get('/api/account/my-account');
+        const response = await axios.get(
+          "http://localhost:3001/api/gdvn/current-account"
+        );
 
         const { user } = response.data;
-
+        console.log(user);
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -134,10 +144,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // LOGIN
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', {
+    const response = await axios.post("http://localhost:3001/api/gdvn/login", {
       email,
       password,
     });
+    console.log(response.data);
     const { accessToken, user } = response.data;
 
     setSession(accessToken);
@@ -151,16 +162,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   // REGISTER
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
-    const response = await axios.post('/api/account/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
+  const register = async (email: string, password: string) => {
+    const response = await axios.post(
+      "http://localhost:3001/api/gdvn/register",
+      {
+        email,
+        password,
+      }
+    );
     const { accessToken, user } = response.data;
 
-    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem("accessToken", accessToken);
 
     dispatch({
       type: Types.REGISTER,
@@ -182,15 +194,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         ...state,
-        method: 'jwt',
+        method: "jwt",
         login,
         loginWithGoogle: () => {},
         loginWithGithub: () => {},
         loginWithTwitter: () => {},
         logout,
         register,
-      }}
-    >
+      }}>
       {children}
     </AuthContext.Provider>
   );

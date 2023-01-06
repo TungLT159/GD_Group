@@ -1,19 +1,61 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Grid, Link, Stack, Typography } from "@mui/material";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useForm } from "react-hook-form";
+
+import FormProvider, {
+  RHFTextField,
+  RHFCheckbox,
+} from "../../../components/hook-form";
+import { LoadingButton } from "@mui/lab";
+
 import { keyframes } from "@emotion/react";
 import { Helmet } from "react-helmet-async";
 
 import { Link as RouterLink } from "react-router-dom";
+import { useAuthContext } from "../../../auth/useAuthContext";
 
+export type FormValuesProps = {
+  email: string;
+  password: string;
+  remember: boolean;
+  afterSubmit?: string;
+};
 function Login() {
+  const { login } = useAuthContext();
+  const defaultValues = {
+    email: "",
+    password: "",
+    remember: false,
+  };
+  // useEffect(() => {
+  //   if (isSubmit) {
+  //     const formData = {
+  //       email: data.email,
+  //       password: data.password,
+  //       remember: data.remember,
+  //     };
+  //     console.log(formData);
+  //     axios({
+  //       method: "post",
+  //       url: "http://localhost:3001/api/gdvn/login",
+  //       data: formData,
+  //     })
+  //       .then(() => {
+  //         setIsSubmit(false);
+  //       })
+  //       .catch((err) => {
+  //         enqueueSnackbar(err.response.data.message);
+  //       });
+  //   }
+  // }, [data, isSubmit, enqueueSnackbar]);
+
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string().email("Email không hợp lệ").required("Nhập email"),
+    password: Yup.string().required("Nhập password"),
+  });
+
   const moveDown = keyframes`
     0% {top:14%},
     25% {top:16%},
@@ -28,6 +70,31 @@ function Login() {
     75%{bottom:13%},
     100%(bottom:15%)
     `;
+
+  const methods = useForm<FormValuesProps>({
+    resolver: yupResolver(LoginSchema),
+    defaultValues,
+  });
+  const {
+    reset,
+    setError,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = methods;
+  const onSubmit = async (data: FormValuesProps) => {
+    try {
+      await login(data.email, data.password);
+    } catch (error: any) {
+      console.error(error);
+
+      reset();
+
+      setError("afterSubmit", {
+        ...error,
+        message: error.message,
+      });
+    }
+  };
   return (
     <>
       <Helmet>
@@ -109,108 +176,96 @@ function Login() {
                 animation: `${moveUp} 10s linear infinite alternate`,
               },
             }}>
-            <Box
-              sx={{
-                width: { xs: "300px", sm: "500px" },
-                backgroundColor: "rgba(255, 255, 255, 0.1)!important",
-                backdropFilter: "blur(10px)",
-                boxShadow:
-                  "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
-                color: "#fff!important",
-                padding: "80px 40px",
-                borderRadius: "10px",
-              }}>
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: "bold", textShadow: "0px 3px 3px #999999" }}>
-                Đăng nhập
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label={
-                  <Typography sx={{ color: "#fff", display: "inline-block" }}>
-                    Email
-                  </Typography>
-                }
-                FormHelperTextProps={{ color: "#fff" }}
-                name="email"
-                autoComplete="email"
-                autoFocus
-                sx={{ textColor: "white" }}
-                color="primary"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label={
-                  <Typography sx={{ color: "#fff", display: "inline-block" }}>
-                    Mật khẩu
-                  </Typography>
-                }
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                color="primary"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Nhớ mật khẩu"
+            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+              <Box
                 sx={{
+                  width: { xs: "300px", sm: "500px" },
+                  backgroundColor: "rgba(255, 255, 255, 0.1)!important",
+                  backdropFilter: "blur(15px)",
+                  boxShadow:
+                    "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
                   color: "#fff!important",
-                  fontSize: { xs: "12px!important", sm: "unset" },
-                }}
-              />
-              <RouterLink to="/">
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
+                  padding: "80px 40px",
+                  borderRadius: "10px",
+                }}>
+                <Typography
+                  variant="h4"
                   sx={{
-                    mt: 3,
-                    mb: 2,
-                    fontSize: { xs: "12px!important", sm: "unset" },
+                    fontWeight: "bold",
+                    textShadow: "0px 3px 3px #999999",
                   }}>
                   Đăng nhập
-                </Button>
-              </RouterLink>
-              <Grid container>
-                <Grid item xs>
-                  <Link
-                    href="#"
-                    variant="body2"
-                    sx={{
-                      color: "hsl(218, 81%, 85%)!important",
-                      fontSize: {
-                        xs: "12px!important",
-                        sm: "unset",
-                      },
-                      textDecoration: "none",
-                    }}>
-                    Quên mật khẩu?
-                  </Link>
+                </Typography>
+                <Stack spacing={3} mt={3} mb={3}>
+                  {!!errors.afterSubmit && (
+                    <Alert severity="error">{errors.afterSubmit.message}</Alert>
+                  )}
+
+                  <RHFTextField
+                    sx={{ color: "white" }}
+                    name="email"
+                    label="Email"
+                    // required
+                  />
+                  <RHFTextField
+                    name="password"
+                    type="password"
+                    sx={{ color: "white" }}
+                    label="Mật khẩu"
+                    // required
+                  />
+                </Stack>
+
+                <RHFCheckbox
+                  name="remember"
+                  label="Nhớ mật khẩu"
+                  sx={{
+                    color: "#fff!important",
+                    fontSize: { xs: "12px!important", sm: "unset" },
+                    marginBottom: "14px",
+                  }}
+                />
+                <LoadingButton
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}>
+                  Đăng nhập
+                </LoadingButton>
+                <Grid container>
+                  <Grid item xs>
+                    <Link
+                      href="#"
+                      variant="body2"
+                      sx={{
+                        color: "hsl(218, 81%, 85%)!important",
+                        fontSize: {
+                          xs: "12px!important",
+                          sm: "unset",
+                        },
+                        textDecoration: "none",
+                      }}>
+                      Quên mật khẩu?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "hsl(218, 81%, 85%)!important",
+                        fontSize: {
+                          xs: "12px!important",
+                          sm: "unset",
+                        },
+                        textDecoration: "none",
+                        transform: "translateY(20%)",
+                      }}>
+                      <RouterLink to="/auth/register">Đăng ký</RouterLink>
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "hsl(218, 81%, 85%)!important",
-                      fontSize: {
-                        xs: "12px!important",
-                        sm: "unset",
-                      },
-                      textDecoration: "none",
-                      transform: "translateY(20%)",
-                    }}>
-                    <RouterLink to="/auth/register">Đăng ký</RouterLink>
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+              </Box>
+            </FormProvider>
           </Grid>
         </Grid>
       </Box>

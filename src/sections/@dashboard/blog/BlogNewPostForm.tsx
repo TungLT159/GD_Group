@@ -88,9 +88,7 @@ export default function BlogNewPostForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      console.log(data);
       const imageUrl: string = await onFileChange(data.image);
-      console.log({ imageUrl });
       setData({
         title: data.title,
         description: data.description,
@@ -98,7 +96,6 @@ export default function BlogNewPostForm() {
         tags: data.tags,
       });
       setIsSubmit(true);
-      console.log(data);
       reset();
       enqueueSnackbar("Nhập thành công!");
     } catch (error) {
@@ -109,7 +106,6 @@ export default function BlogNewPostForm() {
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
-      console.log(file);
 
       const newFile = Object.assign(file, {
         preview: URL.createObjectURL(file),

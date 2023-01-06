@@ -1,9 +1,12 @@
 import { useRoutes, Navigate } from "react-router-dom";
 
 import MainPage from "../components/MainPage";
-// import AuthGuard from "../auth/AuthGuard";
+import AuthGuard from "../auth/AuthGuard";
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/dashboard";
+import GuestGuard from "../auth/GuestGuard";
+import GuestRegister from "../auth/GuestRegister";
+
 import { PATH_AFTER_LOGIN } from "../utils/config";
 
 import Login from "../pages/auth/Login";
@@ -67,17 +70,29 @@ export default function Router() {
       children: [
         {
           path: "login",
-          element: <Login />,
+          element: (
+            <GuestGuard>
+              <Login />,
+            </GuestGuard>
+          ),
         },
         {
           path: "register",
-          element: <Register />,
+          element: (
+            <GuestRegister>
+              <Register />,
+            </GuestRegister>
+          ),
         },
       ],
     },
     {
       path: "dashboard",
-      element: <DashboardLayout />,
+      element: (
+        <AuthGuard>
+          <DashboardLayout />
+        </AuthGuard>
+      ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         { path: "app", element: <GeneralAppPage /> },
