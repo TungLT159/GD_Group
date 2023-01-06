@@ -12,5 +12,14 @@ exports.savePost = (req, res, next) => {
         tags: tags,
     });
     post.save();
-    res.redirect("http://localhost:3002/dashboard/blog/new");
+    res.redirect("http://localhost:3000/dashboard/blog/new");
+};
+
+exports.getPosts = (req, res) => {
+    Post.find().then((posts) => {
+        console.log(posts);
+        res.json({
+            posts: posts,
+        });
+    });
 };
