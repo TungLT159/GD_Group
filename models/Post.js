@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
     title: String,
     description: String,
-    img: Object,
+    img: String,
     tags: Array,
 });
 

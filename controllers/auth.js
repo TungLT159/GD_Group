@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 
 exports.register = (req, res) => {
-    console.log(req.body);
     const email = req.body.email;
     const password = req.body.password;
 
@@ -38,7 +37,6 @@ exports.login = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const remember = req.body.remember;
-    console.log(req.body);
     User.findOne({ email: email }).then((user) => {
         if (!user) {
             res.status(422).json({
@@ -56,22 +54,44 @@ exports.login = (req, res) => {
                         expiresIn: "3d",
                     }
                 );
-                res.send({ accessToken });
+                res.send({ accessToken, user });
             }
         });
     });
 };
 
-exports.getAccount = (req, res) => {
+exports.getCurrentAccount = (req, res) => {
     const user = req.user;
-    console.log(user);
-    User.findById(user.userId).then((user) => {
-        res
-            .send({
-                user: user,
-            })
-            .catch((err) => {
-                console.log(err);
+    User.findById(user.userId)
+        .then((user) => {
+            res.send({ user: user });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+exports.postChangePassword = (req, res) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const email = req.body.email;
+
+    User.findOne({ email: email })
+        .then((user) => {
+            bcrypt.compare(oldPassword, user.password).then((doMacth) => {
+                console.log(doMacth);
+                if (!doMacth) {
+                    res.status(422).json({ message: "Mật khẩu cũ không đúng" });
+                } else {
+                    bcrypt.hash(newPassword, 12).then((hashPassword) => {
+                        user.password = hashPassword;
+                        user.save().then(() => {
+                            console.log("Change password successs!!!!");
+                            res.json({ message: "Đổi mật khẩu thành công" });
+                        });
+                    });
+                }
             });
-    });
+        })
+        .catch((err) => console.log(err));
 };
