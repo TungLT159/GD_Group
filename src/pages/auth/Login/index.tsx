@@ -29,27 +29,6 @@ function Login() {
     password: "",
     remember: false,
   };
-  // useEffect(() => {
-  //   if (isSubmit) {
-  //     const formData = {
-  //       email: data.email,
-  //       password: data.password,
-  //       remember: data.remember,
-  //     };
-  //     console.log(formData);
-  //     axios({
-  //       method: "post",
-  //       url: "http://localhost:3001/api/gdvn/login",
-  //       data: formData,
-  //     })
-  //       .then(() => {
-  //         setIsSubmit(false);
-  //       })
-  //       .catch((err) => {
-  //         enqueueSnackbar(err.response.data.message);
-  //       });
-  //   }
-  // }, [data, isSubmit, enqueueSnackbar]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Email không hợp lệ").required("Nhập email"),

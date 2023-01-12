@@ -27,6 +27,7 @@ const en = {
   cards: `cards`,
   informationList: `information list`,
   enterInformation: `enter information`,
+  fileManager: "file manager",
   kanban: `kanban`,
   general: `general`,
   banking: `banking`,

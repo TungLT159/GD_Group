@@ -7,7 +7,7 @@ import Iconify from "../iconify";
 //
 import { UploadProps } from "./types";
 import RejectionFiles from "./errors/RejectionFiles";
-// import AvatarPreview from './preview/AvatarPreview';
+import AvatarPreview from "./preview/AvatarPreview";
 
 // ----------------------------------------------------------------------
 
@@ -98,7 +98,7 @@ export default function UploadAvatar({
         }}>
         <input {...getInputProps()} />
 
-        {/* {hasFile && <AvatarPreview file={file} />} */}
+        {hasFile && <AvatarPreview file={file} />}
 
         <StyledPlaceholder
           className="placeholder"

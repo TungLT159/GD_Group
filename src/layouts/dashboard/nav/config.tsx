@@ -107,12 +107,12 @@ const navConfig = [
         icon: ICONS.blog,
         children: [
           { title: "informationList", path: PATH_DASHBOARD.blog.posts },
-          { title: "post", path: PATH_DASHBOARD.blog.demoView },
+          // { title: "post", path: PATH_DASHBOARD.blog.demoView },
           { title: "enterInformation", path: PATH_DASHBOARD.blog.new },
         ],
       },
       {
-        title: "File manager",
+        title: "fileManager",
         path: PATH_DASHBOARD.fileManager,
         icon: ICONS.folder,
       },

@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 // form
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,11 +15,14 @@ import { fData } from "../../../../utils/formatNumber";
 // components
 import { CustomFile } from "../../../../components/upload";
 import { useSnackbar } from "../../../../components/snackbar";
+import { onFileChange } from "../../../../utils/uploadImage";
 import FormProvider, {
   // RHFSelect,
   RHFTextField,
   RHFUploadAvatar,
 } from "../../../../components/hook-form";
+import axios from "axios";
+import { reset } from "numeral";
 
 // ----------------------------------------------------------------------
 
@@ -37,9 +40,34 @@ type FormValuesProps = {
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
+  const [data, setData] = useState<FormValuesProps>({
+    displayName: "",
+    email: "",
+    photoURL: "",
+    phoneNumber: "",
+  });
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const { user } = useAuthContext();
 
+  useEffect(() => {
+    if (isSubmit) {
+      const formData = {
+        displayName: data.displayName,
+        email: data.email,
+        photoURL: data.photoURL,
+        phoneNumber: data.phoneNumber,
+      };
+      axios
+        .post("http://localhost:3001/api/gdvn/edit-user", formData)
+        .then(() => {
+          setIsSubmit(false);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [isSubmit, setIsSubmit, data]);
   const UpdateUserSchema = Yup.object().shape({
     displayName: Yup.string().required("Name is required"),
   });
@@ -49,11 +77,6 @@ export default function AccountGeneral() {
     email: user?.email || "",
     photoURL: user?.photoURL || "",
     phoneNumber: user?.phoneNumber || "",
-    // country: user?.country || "",
-    // state: user?.state || "",
-    // city: user?.city || "",
-    // zipCode: user?.zipCode || "",
-    // about: user?.about || "",
   };
 
   const methods = useForm<FormValuesProps>({
@@ -66,11 +89,19 @@ export default function AccountGeneral() {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar("Update success!");
+      const photoURL = await onFileChange(data.photoURL);
+      console.log(data);
+      setData({
+        displayName: data.displayName,
+        email: data.email,
+        photoURL: photoURL,
+        phoneNumber: data.phoneNumber,
+      });
+      reset();
+      setIsSubmit(true);
+      enqueueSnackbar("Cập nhật thành công!");
     } catch (error) {
       console.error(error);
     }

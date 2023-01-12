@@ -21,6 +21,7 @@ const vn = {
   edit: `chỉnh sửa`,
   shop: `cửa hàng`,
   companyInformation: `Thông tin công ty`,
+  fileManager: "Quản lý file",
   post: `bài viết`,
   mail: `thư`,
   chat: `trò chuyện`,

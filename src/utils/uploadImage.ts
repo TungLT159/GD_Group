@@ -20,6 +20,17 @@ export const uploadImageToCloud = async (formData: any) => {
     console.log(err);
   }
 };
+
+// export const checkExistImage = async () => {
+//   try {
+//     const imageUpload = await fetch(
+//       "https://218884566882356:HQYp0gjAxkscB2ja4JtSQKON8PE@api.cloudinary.com/v1_1/dld3ose8t/resources/image"
+//     );
+//     const data = await imageUpload.json();
+//     console.log(data);
+//   } catch {}
+// };
+
 export const onFileChange = async (file: any) => {
   const formData = new FormData();
   // const CLOUDINARY_PRESET = process.env.REACT_APP_CLOUDINARY_PRESET;
